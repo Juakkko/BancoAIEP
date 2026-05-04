@@ -12,7 +12,7 @@
   <!------Inicio de sesion----->
   <!-----Inicio sesion prueba------>
 
-<div class="logincuadrado">
+<div class="logincuadrado">te amo jorge
 <h3 class="mb-3">Iniciar Sesión</h3>
 
   <form action="login.php" method="POST">
