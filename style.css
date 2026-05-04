@@ -1,0 +1,44 @@
+body {
+    background: linear-gradient(135deg, #01214A, #06387a);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.logincuadrado {
+    background: #FFFFFF;
+    padding: 50px;
+    border-radius: 12px;
+    width: 450px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.logincuadrado h3 {
+    margin-bottom: 20px;
+    color: #1b1b1b;
+}
+
+.form-control {
+    border-radius: 10px;
+}
+
+.btn-primary {
+    background-color: #B81D21;
+    border: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #1e3c72;
+}
+
+.alert {
+    width: 320px;
+    margin: 15px auto;
+    text-align: center;
+}
