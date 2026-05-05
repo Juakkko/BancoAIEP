@@ -10,6 +10,9 @@ unset($_SESSION['error_login']);
   <head>
     <meta charset="UTF-8">
     <title>Acceso Clientes - Banco AIEP</title>
+
+<!--Diseño-->
+
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #001a33; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .card { background: #ffffff; color: #333; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 350px; }
@@ -21,6 +24,8 @@ unset($_SESSION['error_login']);
     </style>
 </head>
 <body>
+
+<!---card inicio sesion---->
     <div class="card">
         <h2>BANCO AIEP</h2>
         <?php if($error): ?> <div class="error-msg"><?php echo $error; ?></div> <?php endif; ?>

@@ -57,28 +57,8 @@ $resultado = mysqli_stmt_get_result($stmt);
             </div>
         </header>
 
-        <section class="content">
-            <h2 class="section-title">Mis Cuentas</h2>
+      
             
-            <div class="accounts-grid">
-                <?php while($cuenta = mysqli_fetch_assoc($resultado)): ?>
-                <div class="account-card">
-                    <div class="account-header">
-                        <span class="account-type"><?php echo $cuenta['tipo']; ?></span>
-                        <i class="fas fa-ellipsis-v"></i>
-                    </div>
-                    <div class="account-number">N° <?php echo $cuenta['numero_cuenta']; ?></div>
-                    <div class="account-balance">
-                        <span class="label">Saldo disponible</span>
-                        <span class="amount">$<?php echo number_format($cuenta['saldo'], 0, ',', '.'); ?></span>
-                    </div>
-                    <div class="account-actions">
-                        <a href="transferencia.php" class="btn-action">Transferir</a>
-                        <a href="#" class="btn-link">Ver detalles</a>
-                
-                <?php endwhile; ?>
-            </div>
-        </section>
     </main>
 
 </body>
