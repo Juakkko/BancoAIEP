@@ -24,14 +24,14 @@ unset($_SESSION['error_login']);
     <div class="card">
         <h2>BANCO AIEP</h2>
         <?php if($error): ?> <div class="error-msg"><?php echo $error; ?></div> <?php endif; ?>
-
+        
         <form action ="login.php" method="POST">
             <label>RUT Cliente</label>
             <input type="text" name="rut" placeholder="12345678-9" required>
-
+            
             <label>Contraseña</label>
-            <input type="password" name="password" placeholder="**" required>
-
+            <input type="password" name="password" placeholder="******" required>
+            
             <button type="submit">ENTRAR AL PORTAL</button>
         </form>
     </div>

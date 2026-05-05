@@ -1,21 +1,88 @@
+<?php
+session_start();
+include 'db.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+$user_name = $_SESSION['user_name'];
+
+// Consulta de cuentas (la misma lógica robusta que ya tienes)
+$sql = "SELECT c.numero_cuenta, c.saldo, tc.nombre as tipo 
+        FROM Cuenta c 
+        INNER JOIN TipoCuenta tc ON c.id_tipo_cuenta = tc.id_tipo_cuenta 
+        WHERE c.id_cliente = ? AND c.activa = 1";
+
+$stmt = mysqli_prepare($conexion, $sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$resultado = mysqli_stmt_get_result($stmt);
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Mi Banco - Banco AIEP</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Iconos (opcional, para darle el toque Pro) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="dashboard-body">
 
-<div class="container mt-5">
-    <div class="alert alert-success">
-        Bienvenido, <?php echo $_SESSION['usuario']; ?>
-    </div>
+    <!-- Barra Lateral (Sidebar) -->
+    <nav class="sidebar">
+        <div class="logo">
+            <h2>BANCO<span>AIEP</span></h2>
+        </div>
+        <ul class="nav-links">
+            <li class="active"><a href="#"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="transferencia.php"><i class="fas fa-exchange-alt"></i> Transferir</a></li>
+            <li><a href="#"><i class="fas fa-history"></i> Movimientos</a></li>
+            <li><a href="#"><i class="fas fa-credit-card"></i> Tarjetas</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
+    </nav>
 
-    <a href="cerrarsesion.php" class="btn btn-danger">Cerrar Sesión</a>
-</div>
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="user-info">
+                <span>Hola, <strong><?php echo htmlspecialchars($user_name); ?></strong></span>
+                <div class="avatar"><?php echo strtoupper(substr($user_name, 0, 1)); ?></div>
+            </div>
+        </header>
+
+        <section class="content">
+            <h2 class="section-title">Mis Cuentas</h2>
+            
+            <div class="accounts-grid">
+                <?php while($cuenta = mysqli_fetch_assoc($resultado)): ?>
+                <div class="account-card">
+                    <div class="account-header">
+                        <span class="account-type"><?php echo $cuenta['tipo']; ?></span>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="account-number">N° <?php echo $cuenta['numero_cuenta']; ?></div>
+                    <div class="account-balance">
+                        <span class="label">Saldo disponible</span>
+                        <span class="amount">$<?php echo number_format($cuenta['saldo'], 0, ',', '.'); ?></span>
+                    </div>
+                    <div class="account-actions">
+                        <a href="transferencia.php" class="btn-action">Transferir</a>
+                        <a href="#" class="btn-link">Ver detalles</a>
+                    </div>
+                </div>
+                <?php endwhile; ?>
+            </div>
+        </section>
+    </main>
 
 </body>
 </html>
