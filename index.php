@@ -1,6 +1,5 @@
 <?php
 session_start();
-// recuperar y borrar mensaje de error anterior
 $error = isset($_SESSION['error_login']) ? $_SESSION['error_login'] : "";
 unset($_SESSION['error_login']);
 ?>

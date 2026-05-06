@@ -1,65 +1,241 @@
-<?php
-session_start();
-include 'db.php';
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
-    exit();
+:root {
+    --primary-red: #ec0000; /* Rojo Santander */
+    --dark-blue: #002142;
+    --light-gray: #f5f7fa;
+    --white: #ffffff;
+    --text-dark: #333333;
+    --sidebar-width: 260px;
 }
-    
-$user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['user_name'];
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body.dashboard-body {
+    display: flex;
+    background-color: var(--light-gray);
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: var(--text-dark);
+}
+
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--white);
+    border-right: 1px solid #e1e4e8;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+}
+
+.logo { padding: 30px; text-align: center; }
+.logo h2 { color: var(--primary-red); font-weight: 800; letter-spacing: -1px; }
+.logo span { color: var(--dark-blue); }
+
+.nav-links { list-style: none; flex-grow: 1; margin-top: 20px; }
+.nav-links li { padding: 5px 20px; }
+.nav-links a {
+    display: block;
+    padding: 12px 15px;
+    color: #555;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+.nav-links li.active a, .nav-links a:hover {
+    background-color: #fff0f0;
+    color: var(--primary-red);
+    font-weight: 600;
+}
+.nav-links i { margin-right: 10px; width: 20px; }
+
+.sidebar-footer { padding: 20px; border-top: 1px solid #eee; }
+.sidebar-footer a { color: #888; text-decoration: none; font-size: 14px; }
+
+/* Main Content */
+.main-content {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+}
+
+.top-bar {
+    background: var(--white);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.user-info { display: flex; align-items: center; gap: 15px; }
+.avatar {
+    width: 35px; height: 35px;
+    background: var(--primary-red);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.content { padding: 40px; }
+.section-title { margin-bottom: 25px; font-weight: 600; }
+
+/* Cards */
+.accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.account-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-top: 4px solid var(--primary-red);
+}
+
+.account-header { display: flex; justify-content: space-between; color: #888; font-size: 14px; }
+.account-type { font-weight: bold; color: var(--dark-blue); text-transform: uppercase; }
+.account-number { margin: 10px 0; color: #666; font-size: 14px; }
+
+.account-balance { margin: 20px 0; }
+.account-balance .label { display: block; font-size: 13px; color: #888; }
+.account-balance .amount { font-size: 28px; font-weight: 700; color: var(--text-dark); }
+
+.account-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.btn-action {
+    background: var(--primary-red);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn-link { color: var(--primary-red); text-decoration: none; font-size: 14px; }
+
+/* Contenedor de tabla */
+.table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow-x: auto;
+}
+
+.movimientos-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.movimientos-table th {
+    padding: 15px;
+    border-bottom: 2px solid var(--light-gray);
+    color: var(--dark-blue);
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.movimientos-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.movimientos-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Colores de montos */
+.monto-positivo {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.monto-negativo {
+    color: var(--primary-red);
+    font-weight: bold;
+}
+
+small { color: #888; font-size: 12px; }
 
 
-$sql = "SELECT c.numero_cuenta, c.saldo, tc.nombre as tipo 
-        FROM Cuenta c 
-        INNER JOIN TipoCuenta tc ON c.id_tipo_cuenta = tc.id_tipo_cuenta 
-        WHERE c.id_cliente = ? AND c.activa = 1";
+/* Estilos para el Formulario de Transferencia */
+.transfer-container {
+    max-width: 600px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
 
-$stmt = mysqli_prepare($conexion, $sql);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
-mysqli_stmt_execute($stmt);
-$resultado = mysqli_stmt_get_result($stmt);
-?>
+.form-group { margin-bottom: 20px; }
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dark-blue);
+}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Banco - Banco AIEP</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="dashboard-body">
+.form-group select, .form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+}
 
-    
-    <nav class="sidebar">
-        <div class="logo">
-            <h2>BANCO<span>AIEP</span></h2>
-        </div>
-        <ul class="nav-links">
-            <li><a href="dashboard.php"><i class="fas fa-home"></i> Inicio</a></li>
-            <li><a href="transferencia.php"><i class="fas fa-exchange-alt"></i> Transferir</a></li>
-            <li><a href="movimientos.php"><i class="fas fa-history"></i> Movimientos</a></li>
-        </ul>
-        <div class="sidebar-footer">
-            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-        </div>
-    </nav>
+.btn-primary-red {
+    width: 100%;
+    background: var(--primary-red);
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-   
-    <main class="main-content">
-        <header class="top-bar">
-            <div class="user-info">
-                <span>Hola, <strong><?php echo htmlspecialchars($user_name); ?></strong></span>
-                <div class="avatar"><?php echo strtoupper(substr($user_name, 0, 1)); ?></div>
-            </div>
-        </header>
+.btn-primary-red:hover { background: #c00000; }
 
-      
-            
-    </main>
+/* Alertas */
+.alert {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+.alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.alert.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
-</body>
-</html>
+
+/* Verdes para ingresos */
+.monto-ingreso {
+    color: #27ae60; 
+    font-weight: bold;
+}
+
+/* Rojos para egresos (basado en tu captura) */
+.monto-egreso {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+/* Alineación general */
+.movimientos-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
