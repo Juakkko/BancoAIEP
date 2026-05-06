@@ -121,3 +121,121 @@ body.dashboard-body {
 }
 
 .btn-link { color: var(--primary-red); text-decoration: none; font-size: 14px; }
+
+/* Contenedor de tabla */
+.table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow-x: auto;
+}
+
+.movimientos-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.movimientos-table th {
+    padding: 15px;
+    border-bottom: 2px solid var(--light-gray);
+    color: var(--dark-blue);
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.movimientos-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.movimientos-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Colores de montos */
+.monto-positivo {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.monto-negativo {
+    color: var(--primary-red);
+    font-weight: bold;
+}
+
+small { color: #888; font-size: 12px; }
+
+
+/* Estilos para el Formulario de Transferencia */
+.transfer-container {
+    max-width: 600px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.form-group { margin-bottom: 20px; }
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dark-blue);
+}
+
+.form-group select, .form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.btn-primary-red {
+    width: 100%;
+    background: var(--primary-red);
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary-red:hover { background: #c00000; }
+
+/* Alertas */
+.alert {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+.alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.alert.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+
+/* Verdes para ingresos */
+.monto-ingreso {
+    color: #27ae60; 
+    font-weight: bold;
+}
+
+/* Rojos para egresos (basado en tu captura) */
+.monto-egreso {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+/* Alineación general */
+.movimientos-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
