@@ -1,241 +1,92 @@
-:root {
-    --primary-red: #ec0000; /* Rojo Santander */
-    --dark-blue: #002142;
-    --light-gray: #f5f7fa;
-    --white: #ffffff;
-    --text-dark: #333333;
-    --sidebar-width: 260px;
+<?php
+session_start();
+include 'db.php';
+
+if (!isset($_SESSION['user_id'])) header("Location: index.php");
+
+$u_id = $_SESSION['user_id'];
+$u_name = $_SESSION['user_name'];
+$done = false;
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['confirmar'])) {
+    $monto = $_POST['monto'];
+    $ori = $_POST['cuenta_origen'];
+    $dest_n = $_POST['cuenta_destino'];
+
+    $res = mysqli_query($conexion, "SELECT id_cuenta FROM Cuenta WHERE numero_cuenta = '$dest_n' LIMIT 1");
+    if ($d = mysqli_fetch_assoc($res)) {
+        $dest_id = $d['id_cuenta'];
+        mysqli_begin_transaction($conexion);
+        
+        $q1 = mysqli_query($conexion, "UPDATE Cuenta SET saldo = saldo - $monto WHERE id_cuenta = $ori");
+        $q2 = mysqli_query($conexion, "UPDATE Cuenta SET saldo = saldo + $monto WHERE id_cuenta = $dest_id");
+        $q3 = mysqli_query($conexion, "INSERT INTO Transaccion (id_cuenta_origen, id_cuenta_destino, monto, id_tipo_transaccion, fecha_hora) VALUES ($ori, $dest_id, $monto, 1, NOW())");
+
+        ($q1 && $q2 && $q3) ? (mysqli_commit($conexion) . $done = true) : mysqli_rollback($conexion);
+    } else {
+        echo "<script>alert('Cuenta no existe');</script>";
+    }
 }
+$cuentas = mysqli_query($conexion, "SELECT * FROM Cuenta WHERE id_cliente = $u_id AND activa = 1");
+?>
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Transferir - Banco AIEP</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <nav class="sidebar">
+        <div class="logo"><h2>BANCO<span>AIEP</span></h2></div>
+        <ul class="nav-links">
+            <li><a href="dashboard.php"><i class="fas fa-home"></i> Inicio</a></li>
+            <li class="active"><a href="transferencia.php"><i class="fas fa-exchange-alt"></i> Transferir</a></li>
+            <li><a href="movimientos.php"><i class="fas fa-history"></i> Movimientos</a></li>
+        </ul>
+    </nav>
 
-body.dashboard-body {
-    display: flex;
-    background-color: var(--light-gray);
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    color: var(--text-dark);
-}
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="user-info">
+                <span>Hola, <strong><?= $u_name ?></strong></span>
+                <div class="avatar"><?= strtoupper($u_name[0]) ?></div>
+            </div>
+        </header>
 
-/* Sidebar */
-.sidebar {
-    width: var(--sidebar-width);
-    height: 100vh;
-    background-color: var(--white);
-    border-right: 1px solid #e1e4e8;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-}
-
-.logo { padding: 30px; text-align: center; }
-.logo h2 { color: var(--primary-red); font-weight: 800; letter-spacing: -1px; }
-.logo span { color: var(--dark-blue); }
-
-.nav-links { list-style: none; flex-grow: 1; margin-top: 20px; }
-.nav-links li { padding: 5px 20px; }
-.nav-links a {
-    display: block;
-    padding: 12px 15px;
-    color: #555;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: 0.3s;
-}
-.nav-links li.active a, .nav-links a:hover {
-    background-color: #fff0f0;
-    color: var(--primary-red);
-    font-weight: 600;
-}
-.nav-links i { margin-right: 10px; width: 20px; }
-
-.sidebar-footer { padding: 20px; border-top: 1px solid #eee; }
-.sidebar-footer a { color: #888; text-decoration: none; font-size: 14px; }
-
-/* Main Content */
-.main-content {
-    margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
-}
-
-.top-bar {
-    background: var(--white);
-    padding: 15px 40px;
-    display: flex;
-    justify-content: flex-end;
-    border-bottom: 1px solid #e1e4e8;
-}
-
-.user-info { display: flex; align-items: center; gap: 15px; }
-.avatar {
-    width: 35px; height: 35px;
-    background: var(--primary-red);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
-
-.content { padding: 40px; }
-.section-title { margin-bottom: 25px; font-weight: 600; }
-
-/* Cards */
-.accounts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-}
-
-.account-card {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    border-top: 4px solid var(--primary-red);
-}
-
-.account-header { display: flex; justify-content: space-between; color: #888; font-size: 14px; }
-.account-type { font-weight: bold; color: var(--dark-blue); text-transform: uppercase; }
-.account-number { margin: 10px 0; color: #666; font-size: 14px; }
-
-.account-balance { margin: 20px 0; }
-.account-balance .label { display: block; font-size: 13px; color: #888; }
-.account-balance .amount { font-size: 28px; font-weight: 700; color: var(--text-dark); }
-
-.account-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.btn-action {
-    background: var(--primary-red);
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.btn-link { color: var(--primary-red); text-decoration: none; font-size: 14px; }
-
-/* Contenedor de tabla */
-.table-container {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    overflow-x: auto;
-}
-
-.movimientos-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.movimientos-table th {
-    padding: 15px;
-    border-bottom: 2px solid var(--light-gray);
-    color: var(--dark-blue);
-    font-size: 14px;
-    text-transform: uppercase;
-}
-
-.movimientos-table td {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-    font-size: 15px;
-    vertical-align: middle;
-}
-
-.movimientos-table tr:hover {
-    background-color: #f9f9f9;
-}
-
-/* Colores de montos */
-.monto-positivo {
-    color: #28a745;
-    font-weight: bold;
-}
-
-.monto-negativo {
-    color: var(--primary-red);
-    font-weight: bold;
-}
-
-small { color: #888; font-size: 12px; }
-
-
-/* Estilos para el Formulario de Transferencia */
-.transfer-container {
-    max-width: 600px;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.form-group { margin-bottom: 20px; }
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--dark-blue);
-}
-
-.form-group select, .form-group input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 15px;
-}
-
-.btn-primary-red {
-    width: 100%;
-    background: var(--primary-red);
-    color: white;
-    padding: 15px;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-primary-red:hover { background: #c00000; }
-
-/* Alertas */
-.alert {
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-.alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.alert.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-
-
-/* Verdes para ingresos */
-.monto-ingreso {
-    color: #27ae60; 
-    font-weight: bold;
-}
-
-/* Rojos para egresos (basado en tu captura) */
-.monto-egreso {
-    color: #ff0000;
-    font-weight: bold;
-}
-
-/* Alineación general */
-.movimientos-table td {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-}
+        <section class="content">
+            <div class="transfer-container">
+                <?php if ($done): ?>
+                    <div style="text-align:center; padding:20px;">
+                        <i class="fas fa-check-circle" style="font-size:50px; color:#28a745"></i>
+                        <h2 style="margin:15px 0;">Transferencia Lista</h2>
+                        <a href="transferencia.php" class="btn-primary-red">Hacer otra</a>
+                    </div>
+                <?php else: ?>
+                    <form method="POST">
+                        <div class="form-group">
+                            <label>Desde:</label>
+                            <select name="cuenta_origen" required>
+                                <?php while($c = mysqli_fetch_assoc($cuentas)): ?>
+                                    <option value="<?= $c['id_cuenta'] ?>">N° <?= $c['numero_cuenta'] ?> ($<?= number_format($c['saldo'], 0, ',', '.') ?>)</option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>A la cuenta:</label>
+                            <input type="text" name="cuenta_destino" placeholder="N° de cuenta" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Monto:</label>
+                            <input type="number" name="monto" min="1" placeholder="$ 0" required>
+                        </div>
+                        <button type="submit" name="confirmar" class="btn-primary-red">Confirmar Transferencia</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
