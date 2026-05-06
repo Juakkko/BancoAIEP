@@ -8,9 +8,9 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['user_name']; // Asegúrate de que esta variable esté en tu sesión al loguear
+$user_name = $_SESSION['user_name']; 
 
-// 1. Obtener el ID de cuenta del usuario
+// Obtener el ID de cuenta del usuario
 $sql_cta = "SELECT id_cuenta FROM Cuenta WHERE id_cliente = ? LIMIT 1";
 $stmt_c = mysqli_prepare($conexion, $sql_cta);
 mysqli_stmt_bind_param($stmt_c, "i", $user_id);
@@ -19,7 +19,7 @@ $res_c = mysqli_stmt_get_result($stmt_c);
 $fila_cta = mysqli_fetch_assoc($res_c);
 $mi_id_cuenta = $fila_cta['id_cuenta'];
 
-// 2. Consulta de movimientos
+// Consulta de movimientos
 $sql = "SELECT t.*, tt.nombre as tipo_nombre 
         FROM Transaccion t 
         JOIN TipoTransaccion tt ON t.id_tipo_transaccion = tt.id_tipo_transaccion

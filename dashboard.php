@@ -1,16 +1,16 @@
 <?php
 session_start();
 include 'db.php';
-
+// verificar si el usuario ha iniciado sesion
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
 }
-    
+
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
 
-
+// obtener cuentas activas vinculadas al usuario
 $sql = "SELECT c.numero_cuenta, c.saldo, tc.nombre as tipo 
         FROM Cuenta c 
         INNER JOIN TipoCuenta tc ON c.id_tipo_cuenta = tc.id_tipo_cuenta 
@@ -20,6 +20,8 @@ $stmt = mysqli_prepare($conexion, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
 $resultado = mysqli_stmt_get_result($stmt);
+
+
 ?>
 
 <!DOCTYPE html>
