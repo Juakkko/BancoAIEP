@@ -2,18 +2,20 @@
 session_start();
 include 'db.php';
 
+// Verificamos si el usuario ha iniciado sesión, si no, lo redirigimos al login
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $rut = trim($_POST['rut']);
     $pass = $_POST['password'];
 
     $sql = "SELECT id_cliente, nombre, apellido, password FROM Cliente WHERE rut = ? AND activo = 1";
-    
+    // Preparamos la consulta para evitar inyecciones SQL
     if ($stmt = mysqli_prepare($conexion, $sql)) {
         mysqli_stmt_bind_param($stmt, "s", $rut);
         mysqli_stmt_execute($stmt);
         $resultado = mysqli_stmt_get_result($stmt);
 
+        // Verificamos si se encontró un usuario con ese RUT
         if ($user = mysqli_fetch_assoc($resultado)) {
           
             if ($user['password'] === $pass) { 
@@ -31,14 +33,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit();
             }
         } else {
-            
             $_SESSION['error_login'] = "El RUT no existe o la cuenta está inactiva.";
             header("Location: index.php");
             exit();
         }
         mysqli_stmt_close($stmt);
     } else {
-     
         $_SESSION['error_login'] = "Error interno del servidor. Intente más tarde.";
         header("Location: index.php");
         exit();

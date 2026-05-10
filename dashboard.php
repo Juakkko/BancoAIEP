@@ -1,21 +1,22 @@
 <?php
 session_start();
 include 'db.php';
-
+// Verificamos si el usuario ha iniciado sesión, si no, lo redirigimos al login
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
 }
-
+// Obtenemos el ID y nombre del usuario desde la sesión
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
 
-
+// Consulta para obtener las cuentas activas del cliente junto con su tipo
 $sql = "SELECT c.numero_cuenta, c.saldo, tc.nombre as tipo 
         FROM Cuenta c 
         INNER JOIN TipoCuenta tc ON c.id_tipo_cuenta = tc.id_tipo_cuenta 
         WHERE c.id_cliente = ? AND c.activa = 1";
 
+// Preparamos la consulta para evitar inyecciones SQL
 $stmt = mysqli_prepare($conexion, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
@@ -54,6 +55,7 @@ $resultado = mysqli_stmt_get_result($stmt);
     <main class="main-content">
         <header class="top-bar">
             <div class="user-info">
+                <!-- Mostramos el nombre del usuario y una imagen con la inicial -->
                 <span>Hola, <strong><?php echo htmlspecialchars($user_name); ?></strong></span>
                 <div class="avatar"><?php echo strtoupper(substr($user_name, 0, 1)); ?></div>
             </div>
@@ -61,7 +63,7 @@ $resultado = mysqli_stmt_get_result($stmt);
 
         <section class="content">
             <h2 class="section-title">Mis Cuentas</h2>
-            
+            <!-- Mostramos las cuentas del cliente -->
             <div class="accounts-grid">
                 <?php while($cuenta = mysqli_fetch_assoc($resultado)): ?>
                 <div class="account-card">
@@ -72,6 +74,7 @@ $resultado = mysqli_stmt_get_result($stmt);
                     <div class="account-number">N° <?php echo $cuenta['numero_cuenta']; ?></div>
                     <div class="account-balance">
                         <span class="label">Saldo disponible</span>
+                        <!-- Separamos los miles con puntos -->
                         <span class="amount">$<?php echo number_format($cuenta['saldo'], 0, ',', '.'); ?></span>
                     </div>
                     <div class="account-actions">

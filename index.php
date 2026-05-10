@@ -11,7 +11,6 @@ unset($_SESSION['error_login']);
 <head>
     <meta charset="UTF-8">
     <title>Acceso Clientes - Banco AIEP</title>
-    <!-- Conectamos con el archivo de estilos -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="login-body">
