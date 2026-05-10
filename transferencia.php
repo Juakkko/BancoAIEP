@@ -2,7 +2,7 @@
 session_start();
 include 'db.php';
 
-if (!isset($_SESSION['user_id'])) header("Location: index.php");
+if (!isset($_SESSION['user_id'])) header("Location: index.php");z
 
 $u_id = $_SESSION['user_id'];
 $u_name = $_SESSION['user_name'];
