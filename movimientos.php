@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'db.php';
-
+// Verificamos si el usuario ha iniciado sesión, si no, lo redirigimos al login
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name']; 
 
-
+// Obtenemos el ID de la cuenta del cliente para mostrar sus movimientos
 $sql_cta = "SELECT id_cuenta FROM Cuenta WHERE id_cliente = ? LIMIT 1";
 $stmt_c = mysqli_prepare($conexion, $sql_cta);
 mysqli_stmt_bind_param($stmt_c, "i", $user_id);
@@ -19,13 +19,14 @@ $res_c = mysqli_stmt_get_result($stmt_c);
 $fila_cta = mysqli_fetch_assoc($res_c);
 $mi_id_cuenta = $fila_cta['id_cuenta'];
 
-
+// Consulta para obtener las transacciones relacionadas con la cuenta del cliente
 $sql = "SELECT t.*, tt.nombre as tipo_nombre 
         FROM Transaccion t 
         JOIN TipoTransaccion tt ON t.id_tipo_transaccion = tt.id_tipo_transaccion
         WHERE t.id_cuenta_origen = ? OR t.id_cuenta_destino = ? 
         ORDER BY t.fecha_hora DESC";
 
+// Preparamos la consulta para evitar inyecciones SQL
 $stmt = mysqli_prepare($conexion, $sql);
 mysqli_stmt_bind_param($stmt, "ii", $mi_id_cuenta, $mi_id_cuenta);
 mysqli_stmt_execute($stmt);
@@ -73,6 +74,7 @@ $resultado = mysqli_stmt_get_result($stmt);
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Recorremos los movimientos y los mostramos en la tabla -->
                         <?php while($r = mysqli_fetch_assoc($resultado)): 
                             $es_ingreso = ($r['id_cuenta_destino'] == $mi_id_cuenta);
                             $clase = $es_ingreso ? 'monto-ingreso' : 'monto-egreso';
