@@ -77,7 +77,7 @@ $resultado = mysqli_stmt_get_result($stmt);
                         <!-- Separamos los miles con puntos -->
                         <span class="amount">$<?php echo number_format($cuenta['saldo'], 0, ',', '.'); ?></span>
                     </div>
-                    <a href="eliminar_cuenta.php?id=<? $cuenta['id_user'] ?>";
+                    <a href="eliminar_cuenta.php?id=<?$cuenta['id_user'] ?>";
                         onclick="return confirm('¿Desea desactivar esta cuenta?')"
                         class="btn-primary-red">Desactivar cuenta</a>
                     <div class="account-actions">

@@ -46,6 +46,9 @@ $cuentas = mysqli_query($conexion, "SELECT * FROM Cuenta WHERE id_cliente = $u_i
             <li class="active"><a href="transferencia.php"><i class="fas fa-exchange-alt"></i> Transferir</a></li>
             <li><a href="movimientos.php"><i class="fas fa-history"></i> Movimientos</a></li>
         </ul>
+        <div class="sidebar-footer">
+            <a href="index.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
     </nav>
 
     <main class="main-content">
