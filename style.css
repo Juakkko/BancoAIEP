@@ -307,3 +307,11 @@ small { color: #888; font-size: 12px; }
     font-size: 14px;
     margin-bottom: 15px;
 }
+
+/* Ajuste para el encabezado de la sección */
+.content .d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}

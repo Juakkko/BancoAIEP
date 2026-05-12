@@ -57,8 +57,7 @@ $resultado = mysqli_stmt_get_result($stmt);
         <header class="top-bar">
             
             <div class="user-info">
-                <span>Hola, <strong><?php echo htmlspecialchars($user_name); ?></strong></span>
-                <div class="avatar"><?php echo strtoupper(substr($user_name, 0, 1)); ?></div>
+                <?php include 'header.php'; ?>
             </div>
         </header>
 

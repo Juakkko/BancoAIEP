@@ -54,8 +54,7 @@ $cuentas = mysqli_query($conexion, "SELECT * FROM Cuenta WHERE id_cliente = $u_i
     <main class="main-content">
         <header class="top-bar">
             <div class="user-info">
-                <span>Hola, <strong><?= $u_name ?></strong></span>
-                <div class="avatar"><?= strtoupper($u_name[0]) ?></div>
+                 <?php include 'header.php'; ?>
             </div>
         </header>
 
