@@ -7,9 +7,9 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$user_id   = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
-$rut       = $_SESSION['rut'] ?? "RUT no disponible";
+$rut = $_SESSION['rut'] ?? "RUT no disponible";
 
 
 $sql = "SELECT c.id_cuenta, cl.nombre, cl.rut, c.numero_cuenta, c.saldo, c.activa, tc.nombre as tipo 
@@ -17,7 +17,7 @@ $sql = "SELECT c.id_cuenta, cl.nombre, cl.rut, c.numero_cuenta, c.saldo, c.activ
         INNER JOIN TipoCuenta tc ON c.id_tipo_cuenta = tc.id_tipo_cuenta 
         INNER JOIN Cliente cl ON c.id_cliente = cl.id_cliente 
         WHERE cl.id_cliente = ? AND c.activa = 1";
-        
+
 $stmt = mysqli_prepare($conexion, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
@@ -26,13 +26,17 @@ $resultado = mysqli_stmt_get_result($stmt);
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Banco - Banco AIEP</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
+
 <body class="dashboard-body">
 
     <nav class="sidebar">
@@ -50,43 +54,38 @@ $resultado = mysqli_stmt_get_result($stmt);
     </nav>
 
     <main class="main-content">
-        <header class="top-bar">
-            <div class="user-info">
-                <span>Hola, <strong><?php echo htmlspecialchars($user_name); ?></strong></span>
-                <div class="avatar"><?php echo strtoupper(substr($user_name, 0, 1)); ?></div>
-                <span><?php echo htmlspecialchars($rut); ?></span>
-            </div>
-        </header>
+        <?php require "header.php"; ?>
 
         <section class="content">
             <h2 class="section-title">Mis Cuentas</h2>
-            
+
             <div class="accounts-grid">
-                <?php while($cuenta = mysqli_fetch_assoc($resultado)): ?>
-                <div class="account-card">
-                    <div class="account-header">
-                        <span class="account-type"><?php echo $cuenta['tipo']; ?></span>
-                        <i class="fas fa-ellipsis-v"></i>
+                <?php while ($cuenta = mysqli_fetch_assoc($resultado)): ?>
+                    <div class="account-card">
+                        <div class="account-header">
+                            <span class="account-type"><?php echo $cuenta['tipo']; ?></span>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="account-number">N° <?php echo $cuenta['numero_cuenta']; ?></div>
+                        <div class="account-balance">
+                            <span class="label">Saldo disponible</span>
+                            <span class="amount">$<?php echo number_format($cuenta['saldo'], 0, ',', '.'); ?></span>
+                        </div>
+
+                        <div class="account-actions" style="flex-direction: column; gap: 10px;">
+                            <a href="transferencia.php" class="btn-action" style="text-align: center;">Transferir</a>
+
+                            <a href="deshabilitar_cuenta.php?id=<?php echo $cuenta['id_cuenta']; ?>"
+                                onclick="return confirm('¿Desea deshabilitar esta cuenta?')" class="btn-link"
+                                style="color: var(--primary-red); text-align: center; font-size: 13px;">
+                                Desactivar cuenta
+                            </a>
+                        </div>
                     </div>
-                    <div class="account-number">N° <?php echo $cuenta['numero_cuenta']; ?></div>
-                    <div class="account-balance">
-                        <span class="label">Saldo disponible</span>
-                        <span class="amount">$<?php echo number_format($cuenta['saldo'], 0, ',', '.'); ?></span>
-                    </div>
-                    
-                    <div class="account-actions" style="flex-direction: column; gap: 10px;">
-                        <a href="transferencia.php" class="btn-action" style="text-align: center;">Transferir</a>
-                        
-                        <a href="deshabilitar_cuenta.php?id=<?php echo $cuenta['id_cuenta']; ?>" 
-                           onclick="return confirm('¿Desea deshabilitar esta cuenta?')" 
-                           class="btn-link" style="color: var(--primary-red); text-align: center; font-size: 13px;">
-                           Desactivar cuenta
-                        </a>
-                    </div>
-                </div>
                 <?php endwhile; ?>
             </div>
         </section>
     </main>
 </body>
+
 </html>
