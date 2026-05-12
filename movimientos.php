@@ -49,7 +49,7 @@ $resultado = mysqli_stmt_get_result($stmt);
             <li class="active"><a href="movimientos.php"><i class="fas fa-history"></i> Movimientos</a></li>
         </ul>
         <div class="sidebar-footer">
-            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            <a href="index.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
         </div>
     </nav>
 

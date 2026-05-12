@@ -9,7 +9,7 @@ if (isset($_GET['id'])) {
     $user_id = $_SESSION['user_id'];
 
     // Cambiamos el estado a 0 (Inactiva)
-    $sql = "UPDATE Cuenta SET activa = 0 WHERE id_cuenta = ? AND id_cliente = ?";
+    $sql = "UPDATE cuenta SET activa = 0 WHERE id_cuenta = ? AND id_cliente = ?";
     $stmt = mysqli_prepare($conexion, $sql);
     mysqli_stmt_bind_param($stmt, "ii", $id_cuenta, $user_id);
     
