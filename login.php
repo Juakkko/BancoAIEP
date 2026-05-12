@@ -6,8 +6,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $rut = trim($_POST['rut']);
     $pass = $_POST['password'];
+    
 
-    $sql = "SELECT id_cliente, nombre, apellido, password FROM Cliente WHERE rut = ? AND activo = 1";
+    $sql = "SELECT id_cliente, nombre, apellido,rut,email, password FROM Cliente WHERE rut = ? AND activo = 1";
     
     if ($stmt = mysqli_prepare($conexion, $sql)) {
         mysqli_stmt_bind_param($stmt, "s", $rut);
@@ -21,6 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 $_SESSION['user_id'] = $user['id_cliente'];
                 $_SESSION['user_name'] = $user['nombre'] . " " . $user['apellido'];
+                $_SESSION['rut'] = $user['rut'];
+                
                 
                 header("Location: dashboard.php");
                 exit();
