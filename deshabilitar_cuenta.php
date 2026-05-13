@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'db.php';
-
+// Verificar que el usuario esté autenticado
 if (!isset($_SESSION['user_id'])) exit();
 
 if (isset($_GET['id']) && isset($_GET['estado'])) {

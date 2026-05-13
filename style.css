@@ -1,5 +1,5 @@
 :root {
-    --primary-red: #ec0000; /* Rojo Santander */
+    --primary-red: #ec0000; 
     --dark-blue: #002142;
     --light-gray: #f5f7fa;
     --white: #ffffff;
@@ -16,7 +16,7 @@ body.dashboard-body {
     color: var(--text-dark);
 }
 
-/* Sidebar */
+
 .sidebar {
     width: var(--sidebar-width);
     height: 100vh;
@@ -51,7 +51,7 @@ body.dashboard-body {
 .sidebar-footer { padding: 20px; border-top: 1px solid #eee; }
 .sidebar-footer a { color: #888; text-decoration: none; font-size: 14px; }
 
-/* Main Content */
+
 .main-content {
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
@@ -80,7 +80,7 @@ body.dashboard-body {
 .content { padding: 40px; }
 .section-title { margin-bottom: 25px; font-weight: 600; }
 
-/* Cards */
+
 .accounts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -122,7 +122,7 @@ body.dashboard-body {
 
 .btn-link { color: var(--primary-red); text-decoration: none; font-size: 14px; }
 
-/* Contenedor de tabla */
+
 .table-container {
     background: white;
     padding: 20px;
@@ -156,7 +156,7 @@ body.dashboard-body {
     background-color: #f9f9f9;
 }
 
-/* Colores de montos */
+
 .monto-positivo {
     color: #28a745;
     font-weight: bold;
@@ -170,7 +170,6 @@ body.dashboard-body {
 small { color: #888; font-size: 12px; }
 
 
-/* Estilos para el Formulario de Transferencia */
 .transfer-container {
     max-width: 600px;
     background: white;
@@ -211,7 +210,7 @@ small { color: #888; font-size: 12px; }
 
 .btn-primary-red:hover { background: #c00000; }
 
-/* Alertas */
+
 .alert {
     padding: 15px;
     border-radius: 6px;
@@ -222,29 +221,29 @@ small { color: #888; font-size: 12px; }
 .alert.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
 
-/* Verdes para ingresos */
+
 .monto-ingreso {
     color: #27ae60; 
     font-weight: bold;
 }
 
-/* Rojos para egresos (basado en tu captura) */
+
 .monto-egreso {
     color: #ff0000;
     font-weight: bold;
 }
 
-/* Alineación general */
+
 .movimientos-table td {
     padding: 15px;
     border-bottom: 1px solid #eee;
 }
 
 
-/* --- Estilos del Login Original --- */
+
 
 .login-body {
-    background: #001a33; /* Tu azul oscuro original */
+    background: #001a33;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -264,7 +263,7 @@ small { color: #888; font-size: 12px; }
 
 .login-card h2 {
     text-align: center;
-    color: #004a99; /* Azul del título */
+    color: #004a99;
     margin-bottom: 30px;
 }
 
@@ -276,7 +275,7 @@ small { color: #888; font-size: 12px; }
 .login-card input {
     width: 100%;
     padding: 12px;
-    margin: 10px 0 20px 0; /* Espaciado ajustado */
+    margin: 10px 0 20px 0;
     border: 1px solid #ddd;
     border-radius: 6px;
     box-sizing: border-box;
@@ -285,7 +284,7 @@ small { color: #888; font-size: 12px; }
 .login-card button {
     width: 100%;
     padding: 12px;
-    background: #e63946; /* Tu rojo original */
+    background: #e63946;
     color: white;
     border: none;
     border-radius: 6px;
@@ -308,7 +307,7 @@ small { color: #888; font-size: 12px; }
     margin-bottom: 15px;
 }
 
-/* Ajuste para el encabezado de la sección */
+
 .content .d-flex {
     display: flex;
     justify-content: space-between;

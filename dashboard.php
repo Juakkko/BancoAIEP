@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'db.php';
-
+// Verificar que el usuario esté autenticado
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
@@ -16,7 +16,7 @@ $sql = "SELECT c.id_cuenta, cl.nombre, cl.rut, c.numero_cuenta, c.saldo, c.activ
         INNER JOIN TipoCuenta tc ON c.id_tipo_cuenta = tc.id_tipo_cuenta 
         INNER JOIN Cliente cl ON c.id_cliente = cl.id_cliente 
         WHERE cl.id_cliente = ?";
-
+// Consulta preparada para evitar inyecciones SQL
 $stmt = mysqli_prepare($conexion, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);

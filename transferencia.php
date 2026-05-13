@@ -1,27 +1,27 @@
 <?php
 session_start();
 include 'db.php';
-
+// Verificar que el usuario esté autenticado
 if (!isset($_SESSION['user_id'])) header("Location: index.php");
 
 $u_id = $_SESSION['user_id'];
 $u_name = $_SESSION['user_name'];
 $done = false;
-
+// Procesar transferencia al enviar el formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['confirmar'])) {
     $monto = $_POST['monto'];
     $ori = $_POST['cuenta_origen'];
     $dest_n = $_POST['cuenta_destino'];
-
+// Verificar que la cuenta de origen pertenezca al usuario y tenga saldo suficiente
     $res = mysqli_query($conexion, "SELECT id_cuenta FROM Cuenta WHERE numero_cuenta = '$dest_n' LIMIT 1");
     if ($d = mysqli_fetch_assoc($res)) {
         $dest_id = $d['id_cuenta'];
         mysqli_begin_transaction($conexion);
-        
+        // Restar monto de la cuenta origen, sumar a la destino e insertar registro de transacción
         $q1 = mysqli_query($conexion, "UPDATE Cuenta SET saldo = saldo - $monto WHERE id_cuenta = $ori");
         $q2 = mysqli_query($conexion, "UPDATE Cuenta SET saldo = saldo + $monto WHERE id_cuenta = $dest_id");
         $q3 = mysqli_query($conexion, "INSERT INTO Transaccion (id_cuenta_origen, id_cuenta_destino, monto, id_tipo_transaccion, fecha_hora) VALUES ($ori, $dest_id, $monto, 1, NOW())");
-
+// Si todo salió bien, confirmamos la transacción, sino revertimos
         ($q1 && $q2 && $q3) ? (mysqli_commit($conexion) . $done = true) : mysqli_rollback($conexion);
     } else {
         echo "<script>alert('Cuenta no existe');</script>";

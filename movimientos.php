@@ -2,6 +2,7 @@
 session_start();
 include 'db.php';
 
+// Verificar que el usuario esté autenticado
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
@@ -9,8 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name']; 
-
-
+// Obtener el ID de la cuenta del usuario
 $sql_cta = "SELECT id_cuenta FROM Cuenta WHERE id_cliente = ? LIMIT 1";
 $stmt_c = mysqli_prepare($conexion, $sql_cta);
 mysqli_stmt_bind_param($stmt_c, "i", $user_id);
@@ -19,13 +19,13 @@ $res_c = mysqli_stmt_get_result($stmt_c);
 $fila_cta = mysqli_fetch_assoc($res_c);
 $mi_id_cuenta = $fila_cta['id_cuenta'];
 
-
+// Obtener movimientos relacionados a la cuenta del usuario
 $sql = "SELECT t.*, tt.nombre as tipo_nombre 
         FROM Transaccion t 
         JOIN TipoTransaccion tt ON t.id_tipo_transaccion = tt.id_tipo_transaccion
         WHERE t.id_cuenta_origen = ? OR t.id_cuenta_destino = ? 
         ORDER BY t.fecha_hora DESC";
-
+// Consulta preparada para evitar inyecciones SQL
 $stmt = mysqli_prepare($conexion, $sql);
 mysqli_stmt_bind_param($stmt, "ii", $mi_id_cuenta, $mi_id_cuenta);
 mysqli_stmt_execute($stmt);
